@@ -13,13 +13,13 @@ export interface ConversionResult {
 }
 
 export const CONVERSION_MAP: Record<SupportedFormat, SupportedFormat[]> = {
-  docx: ['md'],
-  md: ['pdf', 'html', 'txt'],
-  pdf: [],
-  html: ['md'],
-  txt: ['md'],
-  csv: ['json'],
-  json: ['csv'],
+  docx: ['md', 'pdf', 'txt'],
+  md:   ['pdf', 'html', 'txt', 'docx'],
+  pdf:  ['md', 'txt', 'docx'],
+  html: [],
+  txt:  ['md', 'docx', 'pdf'],
+  csv:  ['json', 'pdf'],
+  json: ['csv', 'pdf'],
 };
 
 export const ALLOWED_EXTENSIONS: SupportedFormat[] = [
