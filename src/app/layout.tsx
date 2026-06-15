@@ -13,12 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Universal File Converter",
+  title: "File Converter",
   description: "Convert files instantly between formats. No sign-up, no storage, no ads. Fast, private, and free.",
   keywords: ["file converter", "docx to markdown", "markdown to pdf", "csv to json", "json to csv", "html to markdown"],
   authors: [{ name: "Universal File Converter" }],
   openGraph: {
-    title: "Universal File Converter",
+    title: "File Converter",
     description: "Convert files instantly. No sign-up. No storage. No ads.",
     type: "website",
   },

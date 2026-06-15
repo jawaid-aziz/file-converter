@@ -51,7 +51,7 @@ export default function DownloadButton({
   if (!downloadUrl || !fileName) return null;
 
   return (
-    <div className="w-full space-y-3 animate-[slide-up_0.25s_ease-out]">
+    <div className="w-full space-y-3 animate-slide-up">
       <div className="h-px bg-zinc-100 dark:bg-zinc-800" />
       <div className="flex items-center justify-between">
         <div className="min-w-0">
@@ -62,7 +62,7 @@ export default function DownloadButton({
             {fileName}
           </p>
         </div>
-        <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+        <div className="flex items-center gap-2 ml-4 shrink-0">
           <button
             onClick={onReset}
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-600 text-sm font-medium transition-all duration-150"

@@ -250,9 +250,9 @@ export default function Home() {
 
             {/* Error */}
             {error && (
-              <div className="animate-[fade-in_0.2s_ease-out] flex items-start gap-2 text-xs text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 rounded-lg px-3 py-2.5">
+              <div className="animate-fade-in flex items-start gap-2 text-xs text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 rounded-lg px-3 py-2.5">
                 <svg
-                  className="mt-0.5 flex-shrink-0"
+                  className="mt-0.5 shrink-0"
                   width="12"
                   height="12"
                   viewBox="0 0 24 24"
