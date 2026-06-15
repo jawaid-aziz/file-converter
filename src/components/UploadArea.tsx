@@ -1,37 +1,85 @@
-'use client';
+"use client";
 
-import { useCallback, useState } from 'react';
-import { SupportedFormat, ALLOWED_EXTENSIONS } from '@/types/conversion';
-import { isValidExtension, isValidSize } from '@/utils/fileHelpers';
+import { useCallback, useState } from "react";
+import { SupportedFormat, ALLOWED_EXTENSIONS } from "@/types/conversion";
+import { isValidExtension, isValidSize } from "@/utils/fileHelpers";
 
 interface UploadAreaProps {
   onFileSelect: (file: File) => void;
   selectedFile: File | null;
 }
 
-export default function UploadArea({ onFileSelect, selectedFile }: UploadAreaProps) {
+function UploadIcon() {
+  return (
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  );
+}
+
+function FileIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+      <polyline points="13 2 13 9 20 9" />
+    </svg>
+  );
+}
+
+export default function UploadArea({
+  onFileSelect,
+  selectedFile,
+}: UploadAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFile = useCallback((file: File) => {
-    setError(null);
-    if (!isValidExtension(file.name)) {
-      setError(`Unsupported file type. Allowed: ${ALLOWED_EXTENSIONS.join(', ')}`);
-      return;
-    }
-    if (!isValidSize(file.size)) {
-      setError('File exceeds the 20 MB limit.');
-      return;
-    }
-    onFileSelect(file);
-  }, [onFileSelect]);
+  const handleFile = useCallback(
+    (file: File) => {
+      setError(null);
+      if (!isValidExtension(file.name)) {
+        setError(
+          `Unsupported format. Accepted: ${ALLOWED_EXTENSIONS.join(", ")}`,
+        );
+        return;
+      }
+      if (!isValidSize(file.size)) {
+        setError("File exceeds the 20 MB limit.");
+        return;
+      }
+      onFileSelect(file);
+    },
+    [onFileSelect],
+  );
 
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setIsDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    },
+    [handleFile],
+  );
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -40,10 +88,13 @@ export default function UploadArea({ onFileSelect, selectedFile }: UploadAreaPro
 
   const handleDragLeave = useCallback(() => setIsDragging(false), []);
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) handleFile(file);
+    },
+    [handleFile],
+  );
 
   return (
     <div className="w-full">
@@ -52,53 +103,75 @@ export default function UploadArea({ onFileSelect, selectedFile }: UploadAreaPro
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={`
-          relative border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer
-          transition-all duration-200
-          ${isDragging
-            ? 'border-violet-500 bg-violet-50 dark:bg-violet-950/30 scale-[1.01]'
-            : selectedFile
-              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30'
-              : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 hover:border-violet-400 hover:bg-violet-50/50 dark:hover:bg-violet-950/20'
+          relative rounded-xl border-2 border-dashed transition-all duration-200 cursor-pointer
+          ${
+            isDragging
+              ? "border-zinc-400 dark:border-zinc-500 bg-zinc-50 dark:bg-zinc-800/60"
+              : selectedFile
+                ? "border-zinc-300 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-800/30"
+                : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-white dark:bg-zinc-900"
           }
         `}
       >
         <input
           type="file"
-          accept={ALLOWED_EXTENSIONS.map((ext: SupportedFormat) => `.${ext}`).join(',')}
+          accept={ALLOWED_EXTENSIONS.map(
+            (ext: SupportedFormat) => `.${ext}`,
+          ).join(",")}
           onChange={handleInputChange}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
         />
-        <div className="flex flex-col items-center gap-3 pointer-events-none">
+
+        <div className="flex flex-col items-center justify-center gap-3 py-10 px-6 pointer-events-none">
           {selectedFile ? (
             <>
-              <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-2xl">✅</div>
-              <p className="text-emerald-700 dark:text-emerald-400 font-semibold text-base">{selectedFile.name}</p>
-              <p className="text-xs text-gray-400 dark:text-gray-500">
-                {(selectedFile.size / 1024).toFixed(1)} KB · Click or drop to replace
-              </p>
+              <div className="w-10 h-10 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 dark:text-zinc-400">
+                <FileIcon />
+              </div>
+              <div className="text-center">
+                <p className="text-base font-medium text-zinc-800 dark:text-zinc-200">
+                  {selectedFile.name}
+                </p>
+                <p className="text-sm text-zinc-400 dark:text-zinc-500 mt-0.5">
+                  {(selectedFile.size / 1024).toFixed(1)} KB · click to replace
+                </p>
+              </div>
             </>
           ) : (
             <>
-              <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-2xl">📂</div>
-              <div>
-                <p className="text-gray-700 dark:text-gray-200 font-semibold text-base">Drop your file here</p>
-                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">or click to browse</p>
+              <div className="w-10 h-10 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 dark:text-zinc-500">
+                <UploadIcon />
               </div>
-              <div className="flex flex-wrap justify-center gap-1.5 mt-2">
-                {ALLOWED_EXTENSIONS.map((ext) => (
-                  <span key={ext} className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-600">
-                    .{ext}
-                  </span>
-                ))}
+              <div className="text-center">
+                <p className="text-base font-medium text-zinc-700 dark:text-zinc-300">
+                  Drop a file or{" "}
+                  <span className="underline underline-offset-2">browse</span>
+                </p>
+                <p className="text-sm text-zinc-400 dark:text-zinc-500 mt-1">
+                  {ALLOWED_EXTENSIONS.map((e) => `.${e}`).join("  ")} · max 20
+                  MB
+                </p>
               </div>
-              <p className="text-xs text-gray-400 dark:text-gray-600">Max 20 MB</p>
             </>
           )}
         </div>
       </div>
+
       {error && (
-        <p className="mt-3 text-sm text-red-500 dark:text-red-400 flex items-center gap-1.5">
-          <span>⚠️</span> {error}
+        <p className="mt-2 text-xs text-red-500 dark:text-red-400 flex items-center gap-1.5">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          {error}
         </p>
       )}
     </div>

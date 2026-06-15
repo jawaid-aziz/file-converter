@@ -1,20 +1,86 @@
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import { SupportedFormat, CONVERSION_MAP } from '@/types/conversion';
-import { getOutputFileName, getFileExtension } from '@/utils/fileHelpers';
-import UploadArea from '@/components/UploadArea';
-import FormatSelector from '@/components/FormatSelector';
-import ProgressBar from '@/components/ProgressBar';
-import DownloadButton from '@/components/DownloadButton';
+import { useState, useCallback } from "react";
+import { SupportedFormat, CONVERSION_MAP } from "@/types/conversion";
+import { getOutputFileName, getFileExtension } from "@/utils/fileHelpers";
+import UploadArea from "@/components/UploadArea";
+import FormatSelector from "@/components/FormatSelector";
+import ProgressBar from "@/components/ProgressBar";
+import DownloadButton from "@/components/DownloadButton";
 
-const ALL_CONVERSIONS = Object.entries(CONVERSION_MAP).flatMap(([from, targets]) =>
-  (targets as SupportedFormat[]).map((to) => `${from.toUpperCase()} → ${to.toUpperCase()}`)
+const ALL_CONVERSIONS = Object.entries(CONVERSION_MAP).flatMap(
+  ([from, targets]) =>
+    (targets as SupportedFormat[]).map((to) => ({
+      from: from.toUpperCase(),
+      to: to.toUpperCase(),
+    })),
 );
+
+function SunIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="5" />
+      <line x1="12" y1="1" x2="12" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="23" />
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+      <line x1="1" y1="12" x2="3" y2="12" />
+      <line x1="21" y1="12" x2="23" y2="12" />
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </svg>
+  );
+}
 
 export default function Home() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [targetFormat, setTargetFormat] = useState<SupportedFormat | null>(null);
+  const [targetFormat, setTargetFormat] = useState<SupportedFormat | null>(
+    null,
+  );
   const [isConverting, setIsConverting] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [outputFileName, setOutputFileName] = useState<string | null>(null);
@@ -44,14 +110,17 @@ export default function Home() {
 
     try {
       const formData = new FormData();
-      formData.append('file', selectedFile);
-      formData.append('targetFormat', targetFormat);
+      formData.append("file", selectedFile);
+      formData.append("targetFormat", targetFormat);
 
-      const response = await fetch('/api/convert', { method: 'POST', body: formData });
+      const response = await fetch("/api/convert", {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Conversion failed.');
+        throw new Error(data.error || "Conversion failed.");
       }
 
       const blob = await response.blob();
@@ -60,7 +129,7 @@ export default function Home() {
       setDownloadUrl(url);
       setOutputFileName(fileName);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong.');
+      setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setIsConverting(false);
     }
@@ -75,82 +144,105 @@ export default function Home() {
     setError(null);
   }, [downloadUrl]);
 
-  const sourceFormat = selectedFile ? getFileExtension(selectedFile.name) as SupportedFormat : null;
-  const canConvert = selectedFile && targetFormat && !downloadUrl && !isConverting;
+  const sourceFormat = selectedFile
+    ? (getFileExtension(selectedFile.name) as SupportedFormat)
+    : null;
 
   return (
-    <div className={darkMode ? 'dark' : ''}>
-      <main className="min-h-screen bg-gray-50 dark:bg-[#0e0e12] transition-colors duration-300">
-
+    <div className={darkMode ? "dark" : ""}>
+      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300 font-sans">
         {/* Header */}
-        <header className="w-full border-b border-gray-100 dark:border-gray-800/80 bg-white/80 dark:bg-[#0e0e12]/80 backdrop-blur-md sticky top-0 z-10">
-          <div className="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center text-white text-sm font-bold">⇄</div>
-              <span className="text-base font-bold text-gray-900 dark:text-white tracking-tight">
-                Universal File Converter
+        <header className="fixed top-0 left-0 right-0 z-20 border-b border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md">
+          <div className="max-w-2xl mx-auto px-5 h-12 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  className="dark:stroke-zinc-900"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="17 1 21 5 17 9" />
+                  <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                  <polyline points="7 23 3 19 7 15" />
+                  <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                </svg>
+              </div>
+              <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                file-converter
               </span>
             </div>
             <button
               onClick={() => setDarkMode((p) => !p)}
-              className="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:scale-105 transition-all duration-150 flex items-center justify-center text-sm"
+              className="w-7 h-7 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 transition-all duration-150 flex items-center justify-center"
               aria-label="Toggle dark mode"
             >
-              {darkMode ? '☀' : '🌙'}
+              {darkMode ? <SunIcon /> : <MoonIcon />}
             </button>
           </div>
         </header>
 
-        <div className="max-w-4xl mx-auto px-4 py-10 space-y-6">
-
+        {/* Main */}
+        <main className="max-w-2xl mx-auto px-5 pt-24 pb-20">
           {/* Hero */}
-          <div className="text-center space-y-2 py-4">
-            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-              Convert any file,{' '}
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-violet-600 to-fuchsia-500">
-                instantly
-              </span>
+          <div className="mb-10">
+            <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight leading-tight">
+              Convert files between formats
             </h1>
-            <p className="text-gray-400 dark:text-gray-500 text-base max-w-md mx-auto">
-              No account. No storage. No ads. Files are processed in memory and never saved.
+            <p className="mt-2 text-base text-zinc-400 dark:text-zinc-500">
+              No account. No storage. Processed in memory, gone when you are
+              done.
             </p>
           </div>
 
-          {/* Main Converter Card */}
-          <div className="bg-white dark:bg-gray-900/60 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-6 sm:p-8 space-y-6">
+          {/* Converter */}
+          <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 space-y-6">
+            {/* Upload */}
+            <UploadArea
+              onFileSelect={handleFileSelect}
+              selectedFile={selectedFile}
+            />
 
-            {/* Step 1 */}
-            <section className="space-y-3">
-              <StepLabel number={1} label="Upload a file" done={!!selectedFile} />
-              <UploadArea onFileSelect={handleFileSelect} selectedFile={selectedFile} />
-            </section>
-
-            {/* Step 2 */}
+            {/* Format selector */}
             {selectedFile && (
-              <section className="space-y-3">
-                <StepLabel number={2} label="Choose output format" done={!!targetFormat} />
+              <div className="animate-[slide-up_0.2s_ease-out]">
+                <div className="h-px bg-zinc-100 dark:bg-zinc-800 mb-5" />
                 <FormatSelector
                   selectedFile={selectedFile}
                   targetFormat={targetFormat}
                   onFormatSelect={handleFormatSelect}
                 />
-              </section>
+              </div>
             )}
 
-            {/* Step 3 */}
+            {/* Convert button */}
             {selectedFile && targetFormat && !downloadUrl && (
-              <section className="space-y-3">
-                <StepLabel number={3} label="Convert" done={false} />
+              <div className="animate-[slide-up_0.2s_ease-out]">
                 <button
                   onClick={handleConvert}
-                  disabled={!canConvert}
-                  className="w-full py-3.5 rounded-xl bg-violet-600 hover:bg-violet-700 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm transition-all duration-150 shadow-md shadow-violet-200 dark:shadow-violet-900/30"
+                  disabled={isConverting}
+                  className="w-full h-11 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-base font-semibold hover:bg-zinc-700 dark:hover:bg-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 flex items-center justify-center gap-2"
                 >
-                  {isConverting
-                    ? 'Converting…'
-                    : `Convert ${sourceFormat?.toUpperCase()} → ${targetFormat.toUpperCase()}`}
+                  {isConverting ? (
+                    <span className="text-xs font-mono animate-pulse">
+                      converting…
+                    </span>
+                  ) : (
+                    <>
+                      <span>
+                        {sourceFormat?.toUpperCase()} to{" "}
+                        {targetFormat.toUpperCase()}
+                      </span>
+                      <ArrowIcon />
+                    </>
+                  )}
                 </button>
-              </section>
+              </div>
             )}
 
             {/* Progress */}
@@ -158,11 +250,21 @@ export default function Home() {
 
             {/* Error */}
             {error && (
-              <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800">
-                <p className="text-red-600 dark:text-red-400 text-sm flex items-start gap-2">
-                  <span className="mt-0.5">⚠️</span>
-                  <span>{error}</span>
-                </p>
+              <div className="animate-[fade-in_0.2s_ease-out] flex items-start gap-2 text-xs text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 rounded-lg px-3 py-2.5">
+                <svg
+                  className="mt-0.5 flex-shrink-0"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                {error}
               </div>
             )}
 
@@ -174,42 +276,56 @@ export default function Home() {
             />
           </div>
 
-          {/* Conversions Grid */}
-          <div className="bg-white dark:bg-gray-900/60 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">
-              Supported Conversions
+          {/* Supported formats */}
+          <div className="mt-8">
+            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-300 dark:text-zinc-600 mb-3">
+              Supported conversions
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {ALL_CONVERSIONS.map((conversion) => (
-                <div
-                  key={conversion}
-                  className="text-xs font-mono bg-gray-50 dark:bg-gray-800/60 text-gray-500 dark:text-gray-400 px-3 py-2 rounded-lg border border-gray-100 dark:border-gray-700/60 text-center"
+            <div className="flex flex-wrap gap-1.5">
+              {ALL_CONVERSIONS.map(({ from, to }) => (
+                <span
+                  key={`${from}-${to}`}
+                  className="inline-flex items-center gap-1 text-xs font-mono px-2.5 py-1.5 rounded-md bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500"
                 >
-                  {conversion}
-                </div>
+                  {from}
+                  <svg
+                    width="8"
+                    height="8"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                  {to}
+                </span>
               ))}
             </div>
           </div>
-
-        </div>
+        </main>
 
         {/* Footer */}
-        <footer className="text-center py-8 text-xs text-gray-300 dark:text-gray-700">
-          Files are never stored · Processed entirely in memory · Universal File Converter v1.0
+        <footer className="fixed bottom-0 left-0 right-0 border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md">
+          <div className="max-w-2xl mx-auto px-5 h-9 flex items-center justify-between">
+            <span className="text-xs text-zinc-300 dark:text-zinc-600">
+              Files are never stored
+            </span>
+            <span className="text-xs text-zinc-300 dark:text-zinc-600">
+              Built by{" "}
+              <a
+                href="https://jawaid-aziz.framer.website/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 underline underline-offset-2 transition-colors duration-150"
+              >
+                Jawaid Aziz
+              </a>
+            </span>
+          </div>
         </footer>
-
-      </main>
-    </div>
-  );
-}
-
-function StepLabel({ number, label, done }: { number: number; label: string; done: boolean }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className={`w-5 h-5 rounded-full text-[11px] font-bold flex items-center justify-center transition-colors ${done ? 'bg-emerald-500 text-white' : 'bg-violet-600 text-white'}`}>
-        {done ? '✓' : number}
-      </span>
-      <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">{label}</span>
+      </div>
     </div>
   );
 }
