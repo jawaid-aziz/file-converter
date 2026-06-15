@@ -5,16 +5,56 @@ export async function pdfToDocx(buffer: Buffer): Promise<Buffer> {
   const text = await extractTextFromPdf(buffer);
   const lines = text.split('\n');
 
-  const children = lines.map((line) => {
-    const trimmed = line.trim();
-    if (trimmed === '') return new Paragraph({});
+  const children: Paragraph[] = [];
 
-    if (trimmed === trimmed.toUpperCase() && trimmed.length > 3 && trimmed.length < 80) {
-      return new Paragraph({ text: trimmed, heading: HeadingLevel.HEADING_2 });
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (trimmed === '') {
+      children.push(new Paragraph({}));
+      continue;
     }
 
-    return new Paragraph({ children: [new TextRun({ text: trimmed, size: 24 })] });
-  });
+    // Page separator
+    if (trimmed === '---') {
+      children.push(
+        new Paragraph({
+          children: [new TextRun({ text: '', break: 1 })],
+        })
+      );
+      continue;
+    }
+
+    // All caps short line = Heading 2
+    if (trimmed === trimmed.toUpperCase() && trimmed.length > 2 && trimmed.length < 80 && !trimmed.endsWith('.')) {
+      children.push(
+        new Paragraph({ text: trimmed, heading: HeadingLevel.HEADING_2 })
+      );
+      continue;
+    }
+
+    // Short line without trailing punctuation = Heading 3
+    if (
+      trimmed.length < 80 &&
+      !trimmed.endsWith('.') &&
+      !trimmed.endsWith(',') &&
+      !trimmed.endsWith(';') &&
+      trimmed !== trimmed.toLowerCase()
+    ) {
+      children.push(
+        new Paragraph({ text: trimmed, heading: HeadingLevel.HEADING_3 })
+      );
+      continue;
+    }
+
+    // Normal paragraph
+    children.push(
+      new Paragraph({
+        children: [new TextRun({ text: trimmed, size: 24 })],
+        spacing: { after: 120 },
+      })
+    );
+  }
 
   const doc = new Document({ sections: [{ children }] });
   return await Packer.toBuffer(doc);

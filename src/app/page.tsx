@@ -107,7 +107,7 @@ export default function Home() {
           <div className="text-center space-y-2 py-4">
             <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
               Convert any file,{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-500">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-violet-600 to-fuchsia-500">
                 instantly
               </span>
             </h1>

@@ -14,7 +14,7 @@ export default function ProgressBar({ isConverting }: ProgressBarProps) {
         <span className="text-xs text-violet-500 dark:text-violet-400 animate-pulse font-mono">processing…</span>
       </div>
       <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-        <div className="h-full w-1/2 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full animate-[indeterminate_1.5s_ease-in-out_infinite]" />
+        <div className="h-full w-1/2 bg-linear-to-r from-violet-500 to-fuchsia-500 rounded-full animate-[indeterminate_1.5s_ease-in-out_infinite]" />
       </div>
     </div>
   );
