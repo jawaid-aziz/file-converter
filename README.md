@@ -1,4 +1,4 @@
-# Universal File Converter
+# File Converter
 
 A lightweight, privacy-focused web application for converting files between multiple formats — directly in the browser, with no sign-up, no cloud storage, and no ads.
 
