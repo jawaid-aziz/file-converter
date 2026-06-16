@@ -4,7 +4,7 @@ A lightweight, privacy-focused web application for converting files between mult
 
 ## Live Demo
 
-[file-convertor.vercel.app](https://file-convertor.vercel.app)
+[file-convertor-self.vercel.app](https://file-convertor-self.vercel.app)
 
 ## Supported Conversions
 
