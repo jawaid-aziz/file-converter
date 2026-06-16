@@ -14,9 +14,30 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "File Converter",
-  description: "Convert files instantly between formats. No sign-up, no storage, no ads. Fast, private, and free.",
-  keywords: ["file converter", "docx to markdown", "markdown to pdf", "csv to json", "json to csv", "html to markdown"],
-  authors: [{ name: "Universal File Converter" }],
+  description:
+    "Convert files instantly between formats. No sign-up, no storage, no ads. Fast, private, and free.",
+  keywords: [
+    "file converter",
+    "docx to markdown",
+    "markdown to pdf",
+    "csv to json",
+    "json to csv",
+    "html to markdown",
+  ],
+  authors: [{ name: "File Converter" }],
+  icons: {
+    icon: [
+      {
+        url: "/logo-dark.png", // shown on light bg (browser chrome is usually light)
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/logo-light.png", // shown on dark bg
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+    apple: "/logo-dark.png", // Apple touch icons are always on white, so use dark logo
+  },
   openGraph: {
     title: "File Converter",
     description: "Convert files instantly. No sign-up. No storage. No ads.",
