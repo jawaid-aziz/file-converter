@@ -3,11 +3,12 @@ export async function jsonToPdf(content: string): Promise<Buffer> {
   try {
     parsed = JSON.parse(content);
   } catch {
-    throw new Error('Invalid JSON format.');
+    throw new Error("Invalid JSON format.");
   }
 
-  const { jsPDF } = await import('jspdf');
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const jsPDFModule = await import("jspdf");
+  const jsPDF = jsPDFModule.default;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -16,14 +17,14 @@ export async function jsonToPdf(content: string): Promise<Buffer> {
   let y = margin;
 
   doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.text('JSON Data', margin, y);
+  doc.setFont("helvetica", "bold");
+  doc.text("JSON Data", margin, y);
   y += 10;
 
   doc.setFontSize(9);
-  doc.setFont('courier', 'normal');
+  doc.setFont("courier", "normal");
 
-  const jsonLines = JSON.stringify(parsed, null, 2).split('\n');
+  const jsonLines = JSON.stringify(parsed, null, 2).split("\n");
 
   for (const line of jsonLines) {
     const wrapped = doc.splitTextToSize(line, maxWidth);
@@ -35,5 +36,5 @@ export async function jsonToPdf(content: string): Promise<Buffer> {
     y += 5 * wrapped.length + 1;
   }
 
-  return Buffer.from(doc.output('arraybuffer'));
+  return Buffer.from(doc.output("arraybuffer"));
 }

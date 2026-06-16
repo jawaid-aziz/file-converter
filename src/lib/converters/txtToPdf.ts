@@ -1,7 +1,8 @@
 export async function txtToPdf(content: string): Promise<Buffer> {
-  const { jsPDF } = await import('jspdf');
+  const jsPDFModule = await import("jspdf");
+  const jsPDF = jsPDFModule.default;
 
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -9,18 +10,18 @@ export async function txtToPdf(content: string): Promise<Buffer> {
   const maxWidth = pageWidth - margin * 2;
   let y = margin;
 
-  const lines = content.split('\n');
+  const lines = content.split("\n");
 
   for (const line of lines) {
     const trimmed = line.trim();
 
-    if (trimmed === '') {
+    if (trimmed === "") {
       y += 4;
       continue;
     }
 
     doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
+    doc.setFont("helvetica", "normal");
     const wrapped = doc.splitTextToSize(trimmed, maxWidth);
 
     if (y + 6 * wrapped.length > pageHeight - margin) {
@@ -32,5 +33,5 @@ export async function txtToPdf(content: string): Promise<Buffer> {
     y += 6 * wrapped.length + 2;
   }
 
-  return Buffer.from(doc.output('arraybuffer'));
+  return Buffer.from(doc.output("arraybuffer"));
 }
