@@ -1,43 +1,44 @@
 # Universal File Converter
 
-A lightweight, privacy-focused web application for converting files between multiple formats — directly in your browser, with no sign-up, no cloud storage, and no ads.
+A lightweight, privacy-focused web application for converting files between multiple formats — directly in the browser, with no sign-up, no cloud storage, and no ads.
 
 ## Live Demo
 
-Coming soon on Vercel.
+[file-convertor.vercel.app](https://file-convertor.vercel.app)
 
 ## Supported Conversions
 
-| Input  | Output |
-|--------|--------|
-| DOCX   | Markdown |
-| Markdown | PDF |
-| Markdown | HTML |
-| Markdown | TXT |
-| HTML   | Markdown |
-| TXT    | Markdown |
-| CSV    | JSON |
-| JSON   | CSV |
+| Input    | Output                  |
+|----------|-------------------------|
+| DOCX     | Markdown, PDF, TXT      |
+| Markdown | PDF, HTML, TXT, DOCX    |
+| PDF      | Markdown, TXT, DOCX     |
+| TXT      | Markdown, DOCX, PDF     |
+| CSV      | JSON, PDF               |
+| JSON     | CSV, PDF                |
 
 ## Features
 
 - Drag & drop file upload
-- Instant download of converted file
+- Instant in-browser download of converted file
 - Dark mode support
 - No user accounts required
-- No permanent file storage
+- No permanent file storage — files processed in memory only
 - Mobile friendly
+- Minimal, clean UI
 
 ## Tech Stack
 
 - Next.js 15 (App Router)
 - TypeScript
 - Tailwind CSS v4
-- mammoth — DOCX parsing
+- mammoth — DOCX parsing and conversion
 - remark / remark-html — Markdown processing
-- md-to-pdf — PDF generation
-- turndown — HTML to Markdown
-- papaparse — CSV / JSON conversion
+- jsPDF — PDF generation
+- unpdf — PDF text extraction
+- docx — DOCX generation
+- papaparse — CSV parsing
+- Custom CSV parser — CSV to JSON / PDF
 
 ## Getting Started
 
@@ -79,6 +80,42 @@ src/
 
 │   ├── converters/
 
+│   │   ├── docxToMd.ts
+
+│   │   ├── docxToPdf.ts
+
+│   │   ├── docxToTxt.ts
+
+│   │   ├── mdToHtml.ts
+
+│   │   ├── mdToPdf.ts
+
+│   │   ├── mdToTxt.ts
+
+│   │   ├── mdToDocx.ts
+
+│   │   ├── pdfToText.ts
+
+│   │   ├── pdfToMd.ts
+
+│   │   ├── pdfToTxt.ts
+
+│   │   ├── pdfToDocx.ts
+
+│   │   ├── txtToMd.ts
+
+│   │   ├── txtToDocx.ts
+
+│   │   ├── txtToPdf.ts
+
+│   │   ├── csvToJson.ts
+
+│   │   ├── csvToPdf.ts
+
+│   │   ├── jsonToCsv.ts
+
+│   │   └── jsonToPdf.ts
+
 │   └── validation.ts
 
 ├── types/
@@ -91,7 +128,11 @@ src/
 
 ## Deployment
 
-Deploy instantly on [Vercel](https://vercel.com). No environment variables or database setup required.
+Deployed on [Vercel](https://vercel.com). No environment variables or database setup required.
+
+## Author
+
+Built by [Jawaid Aziz](https://jawaid-aziz.framer.website/)
 
 ## License
 
